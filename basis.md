@@ -28,7 +28,7 @@
 
 * 分布式存储
 
-  block chain的数据是存在peers中的，new block的增加会由某个peer发起，广播给其他peer,然后根据consensus mechanism来决定验证该block是否有效。
+  结构是那样的结构，但是block chain的数据是存在peers中的，new block的增加会由某个peer发起，广播给其他peer,然后根据consensus mechanism来决定验证该block是否有效。
 
 * consensus mechanism
 
@@ -63,7 +63,7 @@
     意思是n个peers互相交换对new block的看法，然后honest peer取majority(n-1)的看法来决定new block是否合法,可以证明，只要坏人不超过 (n-1) / 3 ，整个系统就是按honest peer来运行的。
 
   为了交易速度和省电，目前很多加密货币采用了Pos;而PBFT由于需要有多少其他peers，一般适合私有链，联盟链。
-## 3. 交易
-![alt](./pictures/bitcoin-transaction-propagation.png)
+## 3. 资产(Asset)
 
-### 3.1 匿名性
+## 4. 交易
+![alt](./pictures/bitcoin-transaction-propagation.png)
