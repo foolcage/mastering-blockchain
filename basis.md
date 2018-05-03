@@ -38,7 +38,7 @@
 
   首先，"不可篡改“是指整个分布式网络对外提供的block chain data是"不可篡改"的。恶意节点的篡改，得不到承认，并且不影响对外的服务。
 
-  下面结合block chain的具体结构和相应的consensus mechanis来说明,why"不可篡改"?
+  下面结合block chain的具体结构和相应的consensus mechanism来说明,why"不可篡改"?
 
   block chain数据结构的特点是:链式存储，且每一个block(Genesis block除外)有上一个block的hash。
   由于hash的"冲突几率很小,改变input的一个字符，output都会不同"的特性，改变一个区块的数据将会导致后面区块的hash对不上，也许你会说,"改变后面block的hash不就行了？"，但是，由于后面的block也改变了，那么其hash也改变了，而一个block有效的一个必要条件:  
@@ -62,7 +62,9 @@
 
     意思是n个peers互相交换对new block的看法，然后honest peer取majority(n-1)的看法来决定new block是否合法,可以证明，只要坏人不超过 (n-1) / 3 ，整个系统就是按honest peer来运行的。
 
-  为了交易速度和省电，目前很多加密货币采用了Pos;而PBFT由于需要有多少其他peers，一般适合私有链，联盟链。
+    "不可篡改"的保证在于:你需要majority的同意(一般通过签名来保证)，而少数恶意节点显然做不到。
+
+  为了交易速度和省电，目前很多加密货币采用了Pos;而PBFT由于需要知道有多少其他peers并能识别其签名，一般适合私有链，联盟链。
 ## 3. 资产(Asset)
 
 ## 4. 交易
