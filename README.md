@@ -222,40 +222,73 @@ block chain其实是一种特殊的hash chain。
 
 ![alt](./pictures/data-structure.png)
 
-* 不可篡改
+首先，数据是存在分布式网络的各个节点中的，这些节点有可能有些是坏人，"不可篡改“是指整个分布式网络对外提供的block chain data是"不可篡改"的。恶意节点的篡改，得不到承认，并且不影响对外的服务。
 
-  首先，数据是存在分布式网络的各个节点中的，这些节点有可能有些是坏人，"不可篡改“是指整个分布式网络对外提供的block chain data是"不可篡改"的。恶意节点的篡改，得不到承认，并且不影响对外的服务。
+比特币中的好人们商量好:我们只认best block chain,就是符合规则(consensus mechanism)并且最长的那条链。
 
-  比特币中的好人们商量好:我们只认best block chain,就是符合规则(consensus mechanism)并且最长的那条链。
+下面结合block chain的具体结构和相应的consensus mechanism来说明,why"不可篡改"?
 
-  下面结合block chain的具体结构和相应的consensus mechanism来说明,why"不可篡改"?
+block chain数据结构的特点是:
 
-  block chain数据结构的特点是:链式存储，且每一个block(Genesis block除外)有上一个block的hash。
-  由于hash的"冲突几率很小,改变input的一个字符，output都会不同"的特性，改变一个区块的数据将会导致后面区块的hash对不上，也许你会说,"改变后面block的hash不就行了？"，但是，由于后面的block也改变了，那么其hash也改变了，而一个block有效的一个必要条件:  
-  >hash(block)<根据当前平均出块速度计算出的output
+* 链式存储，从任何一个block可以找到其前面的block
+* 且每一个block(Genesis block除外)有上一个block的hash
 
-  也就是说，你需要重新构造数据，也就是重新寻找nonce,而这是非常难的,并且整个系统中peers只认最长的block，也就是说你要跟所有honest peers竞争，理论上，掌握51%以上的算力是有可能对数据进行篡改的，但是，假如你的算力真的非常强，你可以把交易都篡改了，这是否能让你的利益最大化呢？首先，这个篡改肯定会被发现，当honest peers发现很长的不匹配block时，会发出告警，然后用户也会知道，这会导致什么结果呢？一个必然的结果是：系统无法被人信任，价值归0。而拥有强大的算力，并且选择做honest peer，你会获得不错的稳定收益;这就导致强大的算力更倾向于做honest peer,而拥有越多强大算力的honest peer,整个系统就越难被攻破。这就是人性，这就是市场。
+由于hash的"**冲突几率很小,改变input的一个字符，output都会不同**"的特性，改变一个区块的数据将会导致后面区块的hash对不上，也许你会说,"改变后面block的hash不就行了？"，但是，由于后面的block也改变了，那么其hash也改变了，而一个block有效的一个必要条件:
 
-  所以，比特币里面不可篡改的保证靠的是:POW+block chain存储+激励措施的博弈
+>hash(block)<根据当前平均出块速度计算出的target
 
-  但是，这里一个很致命的问题是:POW太浪费电了......
+系统会计算当前1小时的平均出块速度，动态调整difficulty,得出一个target，而一个有效的区块，不但要拥有前一个区块的hash,还必须计算出一个nonce,使得当前block的hash值小于该target。
 
-  那么，有没有既不浪费电又能够保证"不可篡改"的办法呢？
+这意味着，改变任何一个block,并且想跟上目前最长的链，需要重做生成后面所有block的工作量。
 
-  至少，在"去中心化"的条件下是很难实现的。
+而这是非常难的。
 
-  * PoS(Proof of Stake)
+理论上，跟所有honest peers竞争，掌握51%以上的算力是有可能对数据进行篡改的，但是，假如你的算力真的非常强，你可以把交易都篡改了，这是否能让你的利益最大化呢？首先，这个篡改肯定会被发现，当honest peers发现很长的不匹配block时，会发出告警，然后用户也会知道，这会导致什么结果呢？一个必然的结果是：系统无法被人信任，价值归0。而拥有强大的算力，并且选择做honest peer，你会获得不错的稳定收益;这就导致强大的算力更倾向于做honest peer,而拥有越多强大算力的honest peer,整个系统就越难被攻破。这就是人性，这就是市场。
 
-    相当于越有钱，越有话语权(挖矿或者确认交易)，意思是越有钱越想维持这个系统，越不会想破坏这个系统，从而数据也是"不可篡改的";但是，这个将导致一个很明显的结果:有钱的会越来越有钱。越来越集中化。
+所以，比特币里面不可篡改的保证靠的是:**POW** + **block chain存储** + **激励措施的博弈**
 
-  * PBFT(Practical Byzantine Fault Tolerance )?
+但是，这里一个很致命的问题是:POW太浪费电了......
 
-    意思是n个peers互相交换对new block的看法，然后honest peer取majority(n-1)的看法来决定new block是否合法,可以证明，只要坏人不超过 (n-1) / 3 ，整个系统就是按honest peer来运行的。
+那么，有没有既不浪费电又能够保证"不可篡改"的办法呢？
 
-    "不可篡改"的保证在于:你需要majority的同意(一般通过签名来保证)，而少数恶意节点显然做不到。
+至少，在"去中心化"的条件下是很难实现的。
 
-  为了交易速度和省电，目前很多加密货币采用了Pos;而PBFT由于需要知道有多少其他peers并能识别其签名，一般适合私有链，联盟链。
+* PoS(Proof of Stake)
 
-## 6. 交易
+  相当于越有钱，越有话语权(挖矿或者确认交易)，意思是越有钱越想维持这个系统，越不会想破坏这个系统，从而数据也是"不可篡改的";但是，这个将导致一个很明显的结果:有钱的会越来越有钱。越来越集中化。
 
-![alt](./pictures/bitcoin-transaction-propagation.png)
+* PBFT(Practical Byzantine Fault Tolerance )?
+
+  意思是n个peers互相交换对new block的看法，然后honest peer取majority(n-1)的看法来决定new block是否合法,可以证明，只要坏人不超过 (n-1) / 3 ，整个系统就是按honest peer来运行的。
+
+  "不可篡改"的保证在于:你需要majority的同意(一般通过签名来保证)，而少数恶意节点显然做不到。
+
+为了交易速度和省电，目前很多加密货币采用了Pos;而PBFT由于需要知道有多少其他peers并能识别其签名，一般适合私有链，联盟链。
+
+需要注意的是，区块链里面说的共识算法，跟一般分布式系统里面的paxos,raft等一致性协议相比,除了关注网络本身的失效外，还需要对数据的安全性，合约的有效性做很多的工作。
+
+## 9. Blockchain(区块链)
+
+所以，其实给区块链下一个定义不是一件容易的事情。
+
+wikipedia:
+>A blockchain, originally block chain, is a continuously growing list of records, called blocks, which are linked and secured using cryptography. Each block typically contains a cryptographic hash of the previous block, a timestamp and transaction data.
+
+investopedia:
+>A blockchain is a digitized, decentralized, public ledger of all cryptocurrency transactions. Constantly growing as ‘completed’ blocks (the most recent transactions) are recorded and added to it in chronological order, it allows market participants to keep track of digital currency transactions without central recordkeeping. Each node (a computer connected to the network) gets a copy of the blockchain, which is downloaded automatically.
+
+百度百科:
+>
+>狭义来讲，区块链是一种按照时间顺序将数据区块以顺序相连的方式组合成的一种链式数据结构， 并以密码学方式保证的不可篡改和不可伪造的分布式账本。
+>
+>广义来讲，区块链技术是利用块链式数据结构来验证与存储数据、利用分布式节点共识算法来生成和更新数据、利用密码学的方式保证数据传输和访问的安全、利用由自动化脚本代码组成的智能合约来编程和操作数据的一种全新的分布式基础架构与计算方式。
+
+感觉每一个说得都很有道理,也确实都很有道理。
+
+不管如何，上面说的原理部分，基本上就是区块链最核心的部分，虽然各种具体实现有很多细节的不同，但原理就这些了。
+
+而根据区块链发展的历史，**智能合约**的引入就进入了所谓的区块链2.0时代。
+
+连接移动端,Iot就进入了所谓的区块链3.0时代。
+
+是不是有种被时代抛弃的感觉？劳资还在守着java当饭碗，侬都区块链3.0了？
