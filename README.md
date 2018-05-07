@@ -292,3 +292,48 @@ investopedia:
 连接移动端,Iot就进入了所谓的区块链3.0时代。
 
 是不是有种被时代抛弃的感觉？劳资还在守着java当饭碗，侬都区块链3.0了？
+
+## 10. Smart contract(智能合约)
+
+其实代表区块链1.0的比特币也没有那么不智能，我们来看其交易验证的逻辑:
+
+![alt](./pictures/bitcoin-transaction-propagation.png)
+
+交易必须遵守以下规则:
+
+* 任何一个input必须来自于某一个output
+* 一笔交易，可以有多个input,多个output
+* 为了方便，input被spend后就作废了，如果有change(找零)，也体现在output中
+* 可以推断，这科树的叶子记录的address对应的资产就是当前整个比特币的资产状况
+* 叶子上的output也叫UTXO(Unspent Transaction Output)
+* 有效的input必须来自UTXO
+* UXTO里面有public key的hash,对其操作必须提供private key签名和public key
+* 网络节点根据共识机制维护公共账本,这实际上解决了spend twice的问题
+
+这里的验证逻辑就是contract(合约)。
+
+![alt](./pictures/signing-output-to-spend.png)
+
+* Public script包含了UTXO对应的Publick key的hash
+* Signature script包含了private key的签名以及public key
+* 被签名的信息包含下一个UXTO的Public script和amount
+
+这里的script是一种非图灵完备的stack-based的脚本语言。
+
+Public script：
+```
+OP_DUP OP_HASH160 <PubkeyHash> OP_EQUALVERIFY OP_CHECKSIG
+```
+
+Signature script
+```
+<Sig> <PubKey> OP_DUP OP_HASH160 <PubkeyHash> OP_EQUALVERIFY OP_CHECKSIG
+```
+
+其执行过程如下:
+
+![alt](./pictures/validate-stack.png)
+
+每个节点都会对收到的transaction自动执行以上的验证逻辑。
+
+而如果支持图灵完备语言来编写合约，并可动态部署，就叫**智能合约**。
