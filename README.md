@@ -340,3 +340,15 @@ Signature script
 每个节点都会对收到的transaction自动执行以上的验证逻辑。
 
 而如果支持图灵完备语言来编写合约，并可动态部署，就叫**智能合约**。
+
+# 联系方式
+
+QQ群:300911873
+
+目前正在迭代的项目:
+
+https://github.com/foolcage/mastering-fabric
+
+https://github.com/foolcage/fooltrader
+
+欢迎关注 一起探讨
