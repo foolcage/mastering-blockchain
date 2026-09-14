@@ -1,3 +1,5 @@
+
+
 # 前言
 
 这是区块链相关知识的一个梳理，旨在真正的get the skill并方便他人。
@@ -60,7 +62,7 @@
 ## 2. Asset(资产)
 
 在digital asset的世界，address上的数字就是资产。显然，address是key,数字是value。
-理解这一点很重要，blockchain主要主要的应用场景就是数字资产。
+理解这一点很重要，blockchain主要的应用场景就是数字资产。
 
 不太精确的分类:
 
